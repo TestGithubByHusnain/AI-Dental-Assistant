@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { SignUpButton } from "@clerk/nextjs";
 import { CheckCircleIcon } from "lucide-react";
+import { motion } from "framer-motion";
 
 type ButtonVariant = "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
 
@@ -83,6 +84,59 @@ const plans: PlanType[] = [
   },
 ];
 
+// Motion Variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { 
+      staggerChildren: 0.2, 
+      delayChildren: 0.3,
+      ease: "easeOut" 
+    },
+  },
+} as const;
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 50, scale: 0.95 },
+  show: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+      damping: 15,
+      mass: 0.8
+    },
+  },
+} as const;
+
+const featureVariants = {
+  hidden: { opacity: 0, x: -20 },
+  show: { 
+    opacity: 1, 
+    x: 0,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+      damping: 10
+    }
+  }
+} as const;
+
+const titleAnimation = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: [0.6, -0.05, 0.01, 0.99]
+    }
+  }
+} as const;
+
 export default function PricingSection() {
   return (
     <section
@@ -100,43 +154,98 @@ export default function PricingSection() {
       {/* Section Content */}
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-20">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/5 to-primary/10 rounded-full border border-primary/10 backdrop-blur-sm mb-6">
-            <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="text-center mb-20"
+        >
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: "spring", stiffness: 200, damping: 20 }}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/5 to-primary/10 rounded-full border border-primary/10 backdrop-blur-sm mb-6"
+          >
+            <motion.span 
+              animate={{ 
+                scale: [1, 1.2, 1],
+                opacity: [0.5, 1, 0.5]
+              }}
+              transition={{ 
+                duration: 2, 
+                repeat: Infinity,
+                ease: "easeInOut" 
+              }}
+              className="w-2 h-2 bg-primary rounded-full" 
+            />
             <span className="text-sm font-medium text-primary">Simple Pricing</span>
-          </div>
+          </motion.div>
 
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
-            <span className="bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
+            <motion.span 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={titleAnimation}
+              transition={{ delay: 0.2 }}
+              className="block bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent"
+            >
               Choose your
-            </span>
-            <br />
-            <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            </motion.span>
+            <motion.span 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={titleAnimation}
+              transition={{ delay: 0.4 }}
+              className="block bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent"
+            >
               AI dental plan
-            </span>
+            </motion.span>
           </h2>
 
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+          <motion.p 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={titleAnimation}
+            transition={{ delay: 0.6 }}
+            className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed"
+          >
             Book appointments for free and upgrade for unlimited AI consultations. Perfect for ongoing dental care.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Pricing Cards */}
-        <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto"
+        >
           {plans.map((plan) => (
-            <div
+            <motion.div
               key={plan.title}
+              variants={cardVariants}
+              whileHover={{ y: -10, scale: 1.03 }}
+              transition={{ type: "spring", stiffness: 200, damping: 12 }}
               className={`relative group ${
                 plan.highlight ? "scale-105 z-10" : ""
               } transition-transform duration-300`}
             >
               {/* Badge for featured plan */}
               {plan.badge && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.4, type: "spring", stiffness: 150 }}
+                  className="absolute -top-4 left-1/2 -translate-x-1/2 z-20"
+                >
                   <div className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
                     {plan.badge}
                   </div>
-                </div>
+                </motion.div>
               )}
 
               {/* Card */}
@@ -151,19 +260,47 @@ export default function PricingSection() {
                 <div className="space-y-6">
                   {/* Plan Header */}
                   <div className="space-y-3">
-                    <h3 className="text-2xl font-bold">{plan.title}</h3>
-                    <div className="flex items-end gap-1">
-                      <span
+                    <h3 className="text-2xl font-bold" id={`plan-${plan.title.toLowerCase()}`}>{plan.title}</h3>
+                    <motion.div 
+                      className="flex items-end gap-1" 
+                      role="region" 
+                      aria-label={`${plan.title} pricing`}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        delay: 0.3,
+                        type: "spring",
+                        stiffness: 100,
+                        damping: 15
+                      }}
+                    >
+                      <motion.span
                         className={`text-4xl font-bold ${
                           plan.highlight
                             ? "bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent"
                             : ""
                         }`}
+                        aria-label={`${plan.price} ${plan.duration}`}
+                        initial={{ scale: 0.8 }}
+                        animate={{ scale: 1 }}
+                        transition={{
+                          delay: 0.4,
+                          type: "spring",
+                          stiffness: 200
+                        }}
                       >
                         {plan.price}
-                      </span>
-                      <span className="text-muted-foreground mb-1">{plan.duration}</span>
-                    </div>
+                      </motion.span>
+                      <motion.span 
+                        className="text-muted-foreground mb-1" 
+                        aria-hidden="true"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.5 }}
+                      >
+                        {plan.duration}
+                      </motion.span>
+                    </motion.div>
                     <p className="text-muted-foreground">{plan.description}</p>
                   </div>
 
@@ -189,19 +326,55 @@ export default function PricingSection() {
                   )}
 
                   {/* Features */}
-                  <ul className="space-y-4">
+                  <motion.ul 
+                    className="space-y-4"
+                    aria-labelledby={`plan-${plan.title.toLowerCase()}`}
+                    role="list"
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true }}
+                  >
                     {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <CheckCircleIcon className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
+                      <motion.li 
+                        key={i} 
+                        className="flex items-start gap-3"
+                        variants={featureVariants}
+                        custom={i}
+                        transition={{ delay: i * 0.1 }}
+                      >
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 200,
+                            delay: i * 0.1
+                          }}
+                        >
+                          <CheckCircleIcon 
+                            className="w-5 h-5 text-primary mt-0.5 shrink-0" 
+                            aria-hidden="true"
+                          />
+                        </motion.div>
+                        <motion.span 
+                          className="text-sm"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{
+                            delay: i * 0.1,
+                            duration: 0.2
+                          }}
+                        >
+                          {feature}
+                        </motion.span>
+                      </motion.li>
                     ))}
-                  </ul>
+                  </motion.ul>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
