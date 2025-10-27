@@ -3,6 +3,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "../prisma";
 import { AppointmentStatus } from "@prisma/client";
+import { syncUser } from "./users";
 
 function transformAppointment(appointment: any) {
   return {
@@ -69,9 +70,16 @@ export async function getUserAppointmentStats() {
     const { userId } = await auth();
     if (!userId) throw new Error("You must be authenticated");
 
-    const user = await prisma.user.findUnique({ where: { clerkId: userId } });
+    let user = await prisma.user.findUnique({ where: { clerkId: userId } });
 
-    if (!user) throw new Error("User not found");
+    // If user is not found, try to sync first
+    if (!user) {
+      user = await syncUser();
+      if (!user) {
+        console.error("Failed to sync user");
+        return { totalAppointments: 0, completedAppointments: 0 };
+      }
+    }
 
     // these calls will run in parallel, instead of waiting each other
     const [totalCount, completedCount] = await Promise.all([

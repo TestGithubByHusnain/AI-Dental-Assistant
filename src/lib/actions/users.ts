@@ -6,7 +6,7 @@ import { prisma } from "../prisma";
 export async function syncUser() {
   try {
     const user = await currentUser();
-    if (!user) return;
+    if (!user) return null;
 
     const existingUser = await prisma.user.findUnique({ where: { clerkId: user.id } });
     if (existingUser) return existingUser;
@@ -23,6 +23,7 @@ export async function syncUser() {
 
     return dbUser;
   } catch (error) {
-    console.log("Error in syncUser server action", error);
+    console.error("Error in syncUser server action", error);
+    return null;
   }
 }
