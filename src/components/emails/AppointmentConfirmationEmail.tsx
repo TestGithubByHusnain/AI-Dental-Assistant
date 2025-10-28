@@ -36,12 +36,13 @@ function AppointmentConfirmationEmail({
         <Container style={container}>
           <Section style={logoContainer}>
             <Img
-              src="https://i.ibb.co/tRy6cC2/logo.png"
+              src="https://i.ibb.co.com/tRy6cC2/logo.png"
               width="50"
               height="50"
               alt="DentWise"
               style={logo}
-            />            <Text style={logoText}>DentWise</Text>
+            />
+            <Text style={logoText}>DentWise</Text>
           </Section>
 
           <Heading style={h1}>Appointment Confirmed! 🦷</Heading>
@@ -81,10 +82,11 @@ function AppointmentConfirmationEmail({
           </Text>
 
           <Section style={buttonContainer}>
-            <Link style={button} href={(process.env.NEXT_PUBLIC_APP_URL || "") + "/appointments"}>
+            <Link style={button} href={process.env.NEXT_PUBLIC_APP_URL + "/appointments"}>
               View My Appointments
             </Link>
           </Section>
+
           <Text style={footer}>
             Best regards,
             <br />
@@ -102,6 +104,7 @@ function AppointmentConfirmationEmail({
 
 export default AppointmentConfirmationEmail;
 
+// 🤡🤡🤡🤡🤡 styles that were generated using AI 🤡🤡🤡🤡🤡
 const main = {
   backgroundColor: "#ffffff",
   fontFamily:
