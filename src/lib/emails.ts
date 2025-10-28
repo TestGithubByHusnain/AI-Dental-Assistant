@@ -15,7 +15,15 @@ export interface SendAppointmentEmailInput {
 
 export async function sendAppointmentEmail(input: SendAppointmentEmailInput) {
   try {
-    const { userEmail, doctorName, appointmentDate, appointmentTime, appointmentType, duration, price } = input;
+    const {
+      userEmail,
+      doctorName,
+      appointmentDate,
+      appointmentTime,
+      appointmentType,
+      duration,
+      price,
+    } = input;
 
     const res = await resend.emails.send({
       from: "DentWise <no-reply@resend.dev>",
@@ -31,9 +39,19 @@ export async function sendAppointmentEmail(input: SendAppointmentEmailInput) {
       }),
     });
 
-    return { success: true, id: (res as any)?.id, raw: res };
+    // normalize id from different resend response shapes
+    const id = (res as any)?.data?.id ?? (res as any)?.id ?? null;
+
+    return {
+      success: true,
+      id,
+      raw: res,
+    };
   } catch (error) {
     console.error("sendAppointmentEmail error:", error);
-    return { success: false, error };
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to send email",
+    };
   }
 }
